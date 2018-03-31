@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.der62.battlestocks.Login">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        android:layout_alignBottom="@id/email"
+        android:layout_marginBottom="50dp"
+        android:layout_alignStart="@id/email"
+        android:layout_alignLeft="@id/email" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:layout_alignBottom="@id/password"
+        android:layout_marginBottom="50dp"
+        android:layout_alignStart="@id/password"
+        android:layout_alignLeft="@id/password" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="75dp"
+        android:layout_centerHorizontal="true"/>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"/> />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:textSize="24px"
+        android:onClick="onClick"
+        android:layout_alignTop="@id/password"
+        android:layout_marginTop="50dp"
+        android:layout_alignLeft="@id/password"/>
+
+
+    <Button
+        android:id="@+id/createAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:textSize="24px"
+        android:text="Create Account"
+        android:layout_alignRight="@id/password"
+        android:layout_alignBaseline="@id/submit"/>
+
+</RelativeLayout>
+
