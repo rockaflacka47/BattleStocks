@@ -22,10 +22,12 @@ public class Trade extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     FirebaseUser currUser;
-    ArrayList<OwnedStock> ownedStocks;
+    ArrayList<HashMap> ownedStocks;
     ArrayList<HashMap> availableStocks;
     ListView list;
-    ArrayAdapter<String> arrayAdapter;
+    ListView list2;
+    AvailableListAdapter arrayAdapter;
+    HoldingsListAdapter currAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,20 +40,31 @@ public class Trade extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ownedStocks = (ArrayList<OwnedStock>) dataSnapshot.child(currUser.getUid()).child("OwnedStocks").getValue();
+                ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
                 availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
+                /*if(ownedStocks == null){
+                    ownedStocks = new ArrayList<>();
+                    ownedStocks.add(new OwnedStock("Apple", "APPL", 512, 2));
+                    ownedStocks.add(new OwnedStock("Amazon", "AMZN", 800, 1));
+                    ownedStocks.add(new OwnedStock("Microsoft", "MSFT", 400, 3));
+                    ownedStocks.add(new OwnedStock("Google", "GOOGL", 1012, 4));
+                }*/
+                reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
                 ArrayList<String> forList = new ArrayList<>();
                 for(int i = 0; i < availableStocks.size(); i++){
-                    forList.add(availableStocks.get(i).get("name") + " : " + availableStocks.get(i).get("price"));
+                    forList.add(availableStocks.get(i).get("name") + " : $" + availableStocks.get(i).get("price"));
                 }
-                list = (ListView) findViewById(R.id.available);
-                arrayAdapter = new ArrayAdapter<String>(
-                        Trade.this,
-                        android.R.layout.simple_list_item_1,
-                         forList);
-
+                list = (ListView) findViewById(R.id.availableStocksList);
+                arrayAdapter = new AvailableListAdapter(forList, Trade.this, reference, ownedStocks, currUser);
                 list.setAdapter(arrayAdapter);
-                //reference.child("AvailableStocks").setValue(availableStocks);
+                ArrayList<String> currOwnedList = new ArrayList<>();
+                for(int i = 0; i < ownedStocks.size(); i++){
+                    currOwnedList.add(ownedStocks.get(i).get("name") + " : " + ownedStocks.get(i).get("shares") + " shares owned");
+                }
+                currAdapter = new HoldingsListAdapter(currOwnedList, Trade.this);
+                list2 = (ListView) findViewById(R.id.currentHoldingsList);
+                list2.setAdapter(currAdapter);
+
             }
 
             @Override

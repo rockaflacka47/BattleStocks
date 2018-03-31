@@ -13,6 +13,10 @@ public class OwnedStock extends Stock{
     public OwnedStock(int purchased){
         ownedShared = purchased;
     }
+    public OwnedStock(String name, String abbv, double price, int purchased){
+        super(name, abbv, price);
+        ownedShared = purchased;
+    }
 
     public int getShares(){
         return ownedShared;
