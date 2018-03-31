@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1012307071536",
+    "firebase_url": "https://battlestocks-de458.firebaseio.com",
+    "project_id": "battlestocks-de458",
+    "storage_bucket": "battlestocks-de458.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012307071536:android:91b55b19c05ec378",
+        "android_client_info": {
+          "package_name": "com.example.der62.battlestocks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012307071536-d67u1cud4qmoqte92grk2eu92ba8hrnd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.der62.battlestocks",
+            "certificate_hash": "e248d6302bcbd03d749efced6c185fc3f9302a7d"
+          }
+        },
+        {
+          "client_id": "1012307071536-3oqe51tt7v35h38h0880b5le4fsfba7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy2gPYG0xiSRW86T7ElQv_xBYAA4znl4g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012307071536-3oqe51tt7v35h38h0880b5le4fsfba7m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
