@@ -38,4 +38,16 @@
         android:paddingLeft="25dp"
         android:onClick="goProfile"/>
 
+    <Button
+        android:id="@+id/sendphoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile"
+        android:layout_centerHorizontal="true"
+        android:text="Send Photo"
+        android:layout_marginTop="35dp"
+        android:paddingRight="25dp"
+        android:paddingLeft="25dp"
+        android:onClick="goPhoto"/>
+
 </RelativeLayout>

@@ -42,6 +42,12 @@ public class Trade extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
                 availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
+                if(ownedStocks == null){
+                    ownedStocks = new ArrayList<>();
+                }
+                if(availableStocks == null){
+                    availableStocks = new ArrayList<>();
+                }
                 /*if(ownedStocks == null){
                     ownedStocks = new ArrayList<>();
                     ownedStocks.add(new OwnedStock("Apple", "APPL", 512, 2));

@@ -36,6 +36,9 @@ public class Stock {
     public ArrayList<Stock> hashmapToStock(ArrayList<HashMap> stocks){
         ArrayList<Stock> ret = new ArrayList<>();
         for(int i = 0; i < stocks.size(); i++){
+            if(stocks.get(i).get("price").getClass() == Long.class){
+                stocks.get(i).put("price", new Double((Long)stocks.get(i).get("price")));
+            }
             ret.add(new Stock((String)stocks.get(i).get("name"), (String)stocks.get(i).get("abbv"), (Double)stocks.get(i).get("price")));
         }
         return ret;
