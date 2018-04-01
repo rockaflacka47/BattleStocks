@@ -1,5 +1,8 @@
 package com.example.der62.battlestocks;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by DER62 on 3/31/2018.
  */
@@ -28,5 +31,13 @@ public class Stock {
     }
     public double getPrice(){
         return price;
+    }
+
+    public ArrayList<Stock> hashmapToStock(ArrayList<HashMap> stocks){
+        ArrayList<Stock> ret = new ArrayList<>();
+        for(int i = 0; i < stocks.size(); i++){
+            ret.add(new Stock((String)stocks.get(i).get("name"), (String)stocks.get(i).get("abbv"), (Double)stocks.get(i).get("price")));
+        }
+        return ret;
     }
 }
