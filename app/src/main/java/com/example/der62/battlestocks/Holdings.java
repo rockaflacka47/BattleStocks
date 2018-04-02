@@ -2,6 +2,7 @@ package com.example.der62.battlestocks;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -36,9 +37,11 @@ public class Holdings extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         holdingsListString = new ArrayList<>();
+        final ArrayAdapter arrayAdapter;
 
         lv = findViewById(R.id.holdingsList);
-        lv.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, holdingsListString));
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, holdingsListString);
+        lv.setAdapter(arrayAdapter);
 
         //on data change update our list of holdings
         reference.addValueEventListener(new ValueEventListener() {
@@ -46,7 +49,7 @@ public class Holdings extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
                 ownedStocksObj = new ArrayList<>();
-                holdingsListString = new ArrayList<>();
+                holdingsListString.clear();
 
                 if(ownedStocks != null) {
                     for (HashMap h : ownedStocks) {
@@ -60,7 +63,14 @@ public class Holdings extends AppCompatActivity {
 
                     for (OwnedStock os : ownedStocksObj) {
                         holdingsListString.add(os.getAbbv() + " : " + os.getShares() + " shares - $" + df.format(os.getShares() * os.getPrice()));
+                        arrayAdapter.notifyDataSetChanged();
                     }
+                    Log.d("SSSSSSS", "!??????????????????????????????");
+
+                }else{
+                    holdingsListString.add("You currently have no holdings!");
+                    arrayAdapter.notifyDataSetChanged();
+                    Log.d("SSSSSSS", "!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
 
