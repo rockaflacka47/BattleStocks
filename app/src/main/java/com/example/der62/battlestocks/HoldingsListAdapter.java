@@ -67,6 +67,7 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference userRef = database.getReference("Users/" + currentUser.getUid());
         final DatabaseReference userStocksRef = database.getReference("Users/" + currentUser.getUid() + "/Stocks");
 
         sellButton.setOnClickListener(new View.OnClickListener(){
@@ -77,10 +78,21 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                 final Query stocksQuery = userStocksRef.orderByChild("name").equalTo(company);
                 stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long shares = (long) dataSnapshot.child("shares").getValue();
+                    public void onDataChange(final DataSnapshot dataSnapshot1) {
+                        long shares = (long) dataSnapshot1.child("shares").getValue();
                         if (shares > 0) {
-                            userStocksRef.child(dataSnapshot.getKey()).child("shares").setValue(shares - 1);
+                            userStocksRef.child(dataSnapshot1.getKey()).child("shares").setValue(shares - 1);
+                            final double price = Double.valueOf((String) dataSnapshot1.child("price").getValue());
+                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot2) {
+                                    double balance = Double.valueOf((String) dataSnapshot2.child("balance").getValue());
+                                    userRef.child("balance").setValue(Double.valueOf(balance + price).toString());
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {}
+                            });
                         } else {
                             Toast.makeText(context, "You cannot have negative shares", Toast.LENGTH_SHORT);
                         }
@@ -92,6 +104,7 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                 notifyDataSetChanged();
             }
         });
+
         buyButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -100,9 +113,24 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                 final Query stocksQuery = userStocksRef.orderByChild("name").equalTo(company);
                 stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long shares = (long) dataSnapshot.child("shares").getValue();
-                        userStocksRef.child(dataSnapshot.getKey()).child("shares").setValue(shares + 1);
+                    public void onDataChange(final DataSnapshot dataSnapshot1) {
+                        final double price = Double.valueOf((String) dataSnapshot1.child("price").getValue());
+                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot2) {
+                                double balance = Double.valueOf((String) dataSnapshot2.child("balance").getValue());
+                                if (price > balance) {
+                                    Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
+                                } else {
+                                    long shares = (long) dataSnapshot1.child("shares").getValue();
+                                    userStocksRef.child(dataSnapshot1.getKey()).child("shares").setValue(shares + 1);
+                                    userRef.child("balance").setValue(Double.valueOf(balance - price).toString());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {}
+                        });
                     }
 
                     @Override

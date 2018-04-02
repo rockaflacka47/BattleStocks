@@ -57,7 +57,7 @@ public class Trade extends AppCompatActivity {
                 for (int i = 0; i < availableStocks.size(); i++) {
                     forList.add(availableStocks.get(i).get("name") + " : $" + availableStocks.get(i).get("price"));
                 }
-                list = (ListView) findViewById(R.id.availableStocksList);
+                list = findViewById(R.id.availableStocksList);
                 arrayAdapter = new AvailableListAdapter(forList, Trade.this, reference, ownedStocks, currUser);
                 list.setAdapter(arrayAdapter);
                 ArrayList<String> currOwnedList = new ArrayList<>();

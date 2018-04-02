@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -72,6 +73,7 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference userRef = database.getReference("Users/" + currentUser.getUid());
         final DatabaseReference userStocksRef = database.getReference("Users/" + currentUser.getUid() + "/Stocks");
 
         buyButton.setOnClickListener(new View.OnClickListener(){
@@ -82,10 +84,25 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                 final Query userStocksQuery = userStocksRef.orderByChild("name").equalTo(company);
                 userStocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            long shares = (long) dataSnapshot.child("shares").getValue();
-                            userStocksRef.child(dataSnapshot.getKey()).child("shares").setValue(shares + 1);
+                    public void onDataChange(final DataSnapshot dataSnapshot1) {
+                        if (dataSnapshot1.exists()) {
+                            final double price = Double.valueOf((String) dataSnapshot1.child("price").getValue());
+                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot2) {
+                                    double balance = Double.valueOf((String) dataSnapshot2.child("balance").getValue());
+                                    if (price > balance) {
+                                        Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
+                                    } else {
+                                        long shares = (long) dataSnapshot1.child("shares").getValue();
+                                        userStocksRef.child(dataSnapshot1.getKey()).child("shares").setValue(shares + 1);
+                                        userRef.child("balance").setValue(Double.valueOf(balance - price).toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {}
+                            });
                         } else {
                             DatabaseReference stocksRef = database.getReference("AvailableStocks");
                             Query stocksQuery = stocksRef.orderByChild("name").equalTo(company);
