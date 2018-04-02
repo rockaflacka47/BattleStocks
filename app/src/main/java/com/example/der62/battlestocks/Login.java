@@ -71,6 +71,7 @@ public class Login extends AppCompatActivity {
                             DatabaseReference myRef = database.getReference();
                             DatabaseReference currUser = myRef.child("Users").child(user.getUid());
                             currUser.child("email").setValue(email);
+                            currUser.child("money").setValue(2000);
                             goHome();
 
                         } else {
