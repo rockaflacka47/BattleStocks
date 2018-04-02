@@ -53,7 +53,7 @@ public class Holdings extends AppCompatActivity {
 
                 if(ownedStocks != null) {
                     for (HashMap h : ownedStocks) {
-                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), (double) h.get("price"), (int) h.get("shares"));
+                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), new Double((String) h.get("price")), (int) h.get("shares"));
                         ownedStocksObj.add(os);
                     }
 
