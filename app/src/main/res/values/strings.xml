@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BattleStocks</string>
-    
+
     <string name="sell">Sell</string>
     <string name="buy">Buy</string>
     <string name="current_holdings">Current Holdings</string>
