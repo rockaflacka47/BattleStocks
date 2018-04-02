@@ -19,6 +19,8 @@ import android.content.Intent;
         import com.google.firebase.database.DatabaseReference;
         import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 public class Login extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -28,6 +30,9 @@ public class Login extends AppCompatActivity {
     private EditText mPasswordField;
     protected FirebaseUser user = null;
     FirebaseDatabase database;
+
+    private String destination;
+    private Intent initIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,21 @@ public class Login extends AppCompatActivity {
         mEmailField = findViewById(R.id.email);
         mPasswordField = findViewById(R.id.password);
         database = FirebaseDatabase.getInstance();
+
+        initIntent = getIntent(); //intent.getExtras().getString("company")
+        Toast.makeText(Login.this, initIntent.getAction(), Toast.LENGTH_LONG).show();
+        String action = initIntent.getAction();
+        if("edu.pitt.cs1699.team9.NEW_STOCK".equals(action)) {
+            destination = "tradeNew";
+        }else if("edu.pitt.cs1699.team9.PRICE_CHANGE".equals(action)){
+            destination = "profile";
+        }else if("edu.pitt.cs1699.team9.OFF_MARKET".equals(action)){
+            destination = "tradeOff";
+        }else if("edu.pitt.cs1699.team9.CRASH".equals(action)){
+            destination = "holdings";
+        }else{
+            destination = "";
+        }
     }
 
     @Override
@@ -71,7 +91,7 @@ public class Login extends AppCompatActivity {
                             DatabaseReference myRef = database.getReference();
                             DatabaseReference currUser = myRef.child("Users").child(user.getUid());
                             currUser.child("email").setValue(email);
-                            goHome();
+                            enterApp();
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -109,7 +129,7 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             user = mAuth.getCurrentUser();
-                            goHome();
+                            enterApp();
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -127,13 +147,23 @@ public class Login extends AppCompatActivity {
                 });
         // [END sign_in_with_email]
     }
-    private void goHome(){
+
+    private void enterApp(){
         Intent intent = new Intent(this, MainActivity.class);
+        if(destination.equals("tradeNew")){
+            intent.setAction(initIntent.getAction());
+            intent.putExtra("company", initIntent.getExtras().getString("company"));
+            intent.putExtra("price", initIntent.getExtras().getString("price"));
+        }else{
+
+        }
         startActivity(intent);
     }
+
     private void signOut() {
         mAuth.signOut();
     }
+
     private boolean validateForm() {
         boolean valid = true;
 

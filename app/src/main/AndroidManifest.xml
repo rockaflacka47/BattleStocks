@@ -13,6 +13,10 @@
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="edu.pitt.cs1699.team9.NEW_STOCK" />
+                <action android:name="edu.pitt.cs1699.team9.PRICE_CHANGE" />
+                <action android:name="edu.pitt.cs1699.team9.OFF_MARKET" />
+                <action android:name="edu.pitt.cs1699.team9.CRASH" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -20,6 +24,7 @@
         <activity android:name=".Trade" />
         <activity android:name=".Profile" />
         <activity android:name=".Holdings"></activity>
+
     </application>
 
 </manifest>
