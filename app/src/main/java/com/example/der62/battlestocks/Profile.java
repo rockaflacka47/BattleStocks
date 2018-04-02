@@ -26,6 +26,7 @@ public class Profile extends AppCompatActivity {
     FirebaseUser currUser;
     ArrayList<HashMap> ownedStocks;
     ArrayList<OwnedStock> ownedStocksObj;
+    double balance = 0;
     double netWorth = 0;
 
 
@@ -42,6 +43,7 @@ public class Profile extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                balance = new Double((long)dataSnapshot.child("Users").child(currUser.getUid()).child("money").getValue());
                 ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
                 ownedStocksObj = new ArrayList<>();
                 netWorth = 0;
@@ -79,7 +81,10 @@ public class Profile extends AppCompatActivity {
         TextView netWorthTV = findViewById(R.id.NetWorthTV);
         TextView balanceTV = findViewById(R.id.BalanceTV);
 
-        netWorthTV.setText("Net Worth: $" + df.format(netWorth));
-        balanceTV.setText("Balance: $" + df.format(netWorth));
+        DatabaseReference myRef = database.getReference();
+        DatabaseReference userRef = myRef.child("Users").child(currUser.getUid());
+
+        netWorthTV.setText("Net Worth: $" + df.format(netWorth + balance ));
+        balanceTV.setText("Balance: $" + df.format(balance));
     }
 }
