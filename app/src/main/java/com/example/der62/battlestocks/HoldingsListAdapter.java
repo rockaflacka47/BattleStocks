@@ -8,8 +8,18 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //Explanation: https://stackoverflow.com/questions/17525886/listview-with-add-and-delete-buttons-in-each-row-in-android
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -54,17 +64,50 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
         Button sellButton = view.findViewById(R.id.sellButton);
         Button buyButton = view.findViewById(R.id.buyButton);
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference userStocksRef = database.getReference("Users/" + currentUser.getUid() + "/Stocks");
+
         sellButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //sell stock
+                String text = list.get(position);
+                String company = text.substring(0, text.indexOf(" "));
+                final Query stocksQuery = userStocksRef.orderByChild("name").equalTo(company);
+                stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long shares = (long) dataSnapshot.child("shares").getValue();
+                        if (shares > 0) {
+                            userStocksRef.child(dataSnapshot.getKey()).child("shares").setValue(shares - 1);
+                        } else {
+                            Toast.makeText(context, "You cannot have negative shares", Toast.LENGTH_SHORT);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
                 notifyDataSetChanged();
             }
         });
         buyButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //buy stock
+                String text = list.get(position);
+                String company = text.substring(0, text.indexOf(" "));
+                final Query stocksQuery = userStocksRef.orderByChild("name").equalTo(company);
+                stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long shares = (long) dataSnapshot.child("shares").getValue();
+                        userStocksRef.child(dataSnapshot.getKey()).child("shares").setValue(shares + 1);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
                 notifyDataSetChanged();
             }
         });

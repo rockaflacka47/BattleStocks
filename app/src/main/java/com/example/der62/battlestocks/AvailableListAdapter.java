@@ -11,7 +11,12 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,15 +69,55 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
         //Handle buttons and add onClickListeners
         final Button buyButton = view.findViewById(R.id.buyButton);
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference userStocksRef = database.getReference("Users/" + currentUser.getUid() + "/Stocks");
+
         buyButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //buy stock
-                int numOwned = 0;
-                if(owned.contains(list.get(position))){
+                String text = list.get(position);
+                final String company = text.substring(0, text.indexOf(" "));
+                final Query userStocksQuery = userStocksRef.orderByChild("name").equalTo(company);
+                userStocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            long shares = (long) dataSnapshot.child("shares").getValue();
+                            userStocksRef.child(dataSnapshot.getKey()).child("shares").setValue(shares + 1);
+                        } else {
+                            DatabaseReference stocksRef = database.getReference("AvailableStocks");
+                            Query stocksQuery = stocksRef.orderByChild("name").equalTo(company);
+                            stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    final double price = (double) dataSnapshot.child("price").getValue();
 
-                }
-                //owned.add(list.get(position).split(":")[1], )
+                                    userStocksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            long count = dataSnapshot.getChildrenCount();
+                                            userStocksRef.child(Long.toString(count)).child("name").setValue(company);
+                                            userStocksRef.child(Long.toString(count)).child("price").setValue(price);
+                                            userStocksRef.child(Long.toString(count)).child("shares").setValue(1);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {}
+                                    });
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {}
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
                 notifyDataSetChanged();
             }
         });
