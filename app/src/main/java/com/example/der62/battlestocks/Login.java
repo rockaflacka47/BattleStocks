@@ -91,7 +91,7 @@ public class Login extends AppCompatActivity {
                             DatabaseReference myRef = database.getReference();
                             DatabaseReference currUser = myRef.child("Users").child(user.getUid());
                             currUser.child("email").setValue(email);
-                            enterApp();
+                            goHome();
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -129,7 +129,7 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             user = mAuth.getCurrentUser();
-                            enterApp();
+                            goHome();
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -148,7 +148,7 @@ public class Login extends AppCompatActivity {
         // [END sign_in_with_email]
     }
 
-    private void enterApp(){
+    private void goHome(){
         Intent intent = new Intent(this, MainActivity.class);
         if(destination.equals("tradeNew")){
             intent.setAction(initIntent.getAction());
