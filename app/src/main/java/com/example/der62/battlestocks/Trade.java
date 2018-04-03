@@ -1,7 +1,9 @@
 package com.example.der62.battlestocks;
 
+import android.renderscript.Sampler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -28,6 +30,8 @@ public class Trade extends AppCompatActivity {
     ListView list2;
     AvailableListAdapter arrayAdapter;
     HoldingsListAdapter currAdapter;
+    ValueEventListener listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +41,7 @@ public class Trade extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
 
-        reference.addValueEventListener(new ValueEventListener() {
+        listener = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
@@ -55,17 +59,23 @@ public class Trade extends AppCompatActivity {
                     ownedStocks.add(new OwnedStock("Microsoft", "MSFT", 400, 3));
                     ownedStocks.add(new OwnedStock("Google", "GOOGL", 1012, 4));
                 }*/
-                reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
+
+                    reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
                 ArrayList<String> forList = new ArrayList<>();
-                for(int i = 0; i < availableStocks.size(); i++){
-                    forList.add(availableStocks.get(i).get("name") + " : $" + availableStocks.get(i).get("price"));
+                if(availableStocks != null) {
+                    for (int i = 0; i < availableStocks.size(); i++) {
+                        Log.d("SHIT", "" + availableStocks.size());
+                        forList.add(availableStocks.get(i).get("name") + " : $" + availableStocks.get(i).get("price"));
+                    }
                 }
-                list = (ListView) findViewById(R.id.availableStocksList);
-                arrayAdapter = new AvailableListAdapter(forList, Trade.this, reference, ownedStocks, currUser);
-                list.setAdapter(arrayAdapter);
-                ArrayList<String> currOwnedList = new ArrayList<>();
-                for(int i = 0; i < ownedStocks.size(); i++){
-                    currOwnedList.add(ownedStocks.get(i).get("name") + " : " + ownedStocks.get(i).get("shares") + " shares owned");
+                    list = findViewById(R.id.availableStocksList);
+                    arrayAdapter = new AvailableListAdapter(forList, Trade.this, reference, ownedStocks, currUser);
+                    list.setAdapter(arrayAdapter);
+                    ArrayList<String> currOwnedList = new ArrayList<>();
+                if(ownedStocks != null) {
+                    for (int i = 0; i < ownedStocks.size(); i++) {
+                        currOwnedList.add(ownedStocks.get(i).get("name") + " : " + ownedStocks.get(i).get("shares") + " shares owned");
+                    }
                 }
                 currAdapter = new HoldingsListAdapter(currOwnedList, Trade.this);
                 list2 = (ListView) findViewById(R.id.currentHoldingsList);
@@ -81,5 +91,9 @@ public class Trade extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        reference.removeEventListener(listener);
+    }
 }
