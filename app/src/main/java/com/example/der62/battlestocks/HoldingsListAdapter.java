@@ -87,7 +87,7 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot2) {
                                     double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
-                                    userRef.child("balance").setValue(Double.valueOf(balance + price).toString());
+                                    userRef.child("money").setValue(Double.valueOf(balance + price).toString());
                                 }
 
                                 @Override
@@ -123,8 +123,18 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                                     Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
                                 } else {
                                     long shares = (long) dataSnapshot1.child("shares").getValue();
-                                    userStocksRef.child(dataSnapshot1.getKey()).child("shares").setValue(shares + 1);
-                                    userRef.child("balance").setValue(Double.valueOf(balance - price).toString());
+
+                                    Iterable<DataSnapshot> it = dataSnapshot1.getChildren();
+                                    DataSnapshot ref = null;
+
+                                    for(DataSnapshot ch : it){
+                                        ref = ch;
+                                    }
+
+                                    userStocksRef.child(ref.getKey()).child("shares").setValue(shares + 1);
+
+
+                                    userRef.child("money").setValue(Double.valueOf(balance - price).toString());
                                 }
                             }
 

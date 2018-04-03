@@ -1,6 +1,7 @@
 package com.example.der62.battlestocks;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +87,16 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot1) {
                         if (dataSnapshot1.exists()) {
-                            final double price = Double.valueOf((String) dataSnapshot1.child("price").getValue());
+
+                            Iterable<DataSnapshot> it = dataSnapshot1.getChildren();
+                            double tPrice = 0;
+
+                            for(DataSnapshot ch : it){
+                                tPrice = new Double((long)ch.child("price").getValue());
+                            }
+
+                            final double price = tPrice;
+
                             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot2) {
@@ -94,9 +104,28 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                                     if (price > balance) {
                                         Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
                                     } else {
-                                        long shares = (long) dataSnapshot1.child("shares").getValue();
-                                        userStocksRef.child(dataSnapshot1.getKey()).child("shares").setValue(shares + 1);
-                                        userRef.child("balance").setValue(Double.valueOf(balance - price).toString());
+
+
+
+                                        Iterable<DataSnapshot> it = dataSnapshot1.getChildren();
+                                        long shares = 0;
+
+                                        for(DataSnapshot ch : it){
+                                            shares = (long)ch.child("shares").getValue();
+                                        }
+
+
+
+                                        Iterable<DataSnapshot> it1 = dataSnapshot1.getChildren();
+                                        DataSnapshot ref = null;
+
+                                        for(DataSnapshot ch : it1){
+                                            ref = ch;
+                                        }
+
+                                        userStocksRef.child(ref.getKey()).child("shares").setValue(shares + 1);
+
+                                        userRef.child("money").setValue(Double.valueOf(balance - price).toString());
                                     }
                                 }
 
@@ -109,7 +138,15 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                             stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    final double price = (double) dataSnapshot.child("price").getValue();
+                                    //Log.d("TAG", ""+ (long)dataSnapshot.child("price").getValue());
+                                    Iterable<DataSnapshot> it = dataSnapshot.getChildren();
+                                    double tPrice = 0;
+
+                                    for(DataSnapshot ch : it){
+                                        tPrice = new Double((long)ch.child("price").getValue());
+                                    }
+
+                                    final double price = tPrice;
 
                                     userStocksRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -118,6 +155,7 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                                             userStocksRef.child(Long.toString(count)).child("name").setValue(company);
                                             userStocksRef.child(Long.toString(count)).child("price").setValue(price);
                                             userStocksRef.child(Long.toString(count)).child("shares").setValue(1);
+                                            //userRef.child("money").setValue(Double.valueOf(balance - price).toString());
                                         }
 
                                         @Override
