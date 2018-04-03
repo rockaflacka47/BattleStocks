@@ -90,7 +90,7 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot2) {
-                                    double balance = Double.valueOf((String) dataSnapshot2.child("balance").getValue());
+                                    double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
                                     if (price > balance) {
                                         Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
                                     } else {

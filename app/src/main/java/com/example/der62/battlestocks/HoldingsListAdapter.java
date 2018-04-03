@@ -86,7 +86,7 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot2) {
-                                    double balance = Double.valueOf((String) dataSnapshot2.child("balance").getValue());
+                                    double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
                                     userRef.child("balance").setValue(Double.valueOf(balance + price).toString());
                                 }
 
