@@ -121,7 +121,7 @@ public class Login extends AppCompatActivity {
 
     }
 
-    public void createAccount(final String email, String password){
+    public void createAccount(String email, String password){
         if (!validateForm()) {
             return;
         }
@@ -144,12 +144,12 @@ public class Login extends AppCompatActivity {
                             DatabaseReference myRef = database.getReference();
                             DatabaseReference currUser = myRef.child("Users").child(user.getUid());
                             currUser.child("email").setValue(email);
-                            currUser.child("money").setValue(2000);
+                            currUser.child("money").setValue(2000.0);
                             goHome();
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(Login.this, "Authentication failed.",
+                            Toast.makeText(Login.this, task.getException().toString(),
                                     Toast.LENGTH_SHORT).show();
 
 
@@ -187,15 +187,15 @@ public class Login extends AppCompatActivity {
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(Login.this, "Authentication failed.",
+                            Toast.makeText(Login.this, task.getException().toString(),
                                     Toast.LENGTH_SHORT).show();
 
                         }
 
                         // [START_EXCLUDE]
-                        if (!task.isSuccessful()) {
-                            mStatusTextView.setText("Authorization Failed");
-                        }
+                        //if (!task.isSuccessful()) {
+                        //    mStatusTextView.setText("Authorization Failed");
+                        //}
                         // [END_EXCLUDE]
                     }
                 });
