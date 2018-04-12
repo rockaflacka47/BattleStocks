@@ -32,6 +32,7 @@ public class Stock {
     public double getPrice(){
         return price;
     }
+    public void setPrice(double newPrice){ price = newPrice ; }
 
     public ArrayList<Stock> hashmapToStock(ArrayList<HashMap> stocks){
         ArrayList<Stock> ret = new ArrayList<>();
