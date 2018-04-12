@@ -40,7 +40,7 @@ public class Stock {
             if(stocks.get(i).get("price").getClass() == Long.class){
                 stocks.get(i).put("price", new Double((Long)stocks.get(i).get("price")));
             }
-            ret.add(new Stock((String)stocks.get(i).get("name"), (String)stocks.get(i).get("abbv"), (Double)stocks.get(i).get("price")));
+            ret.add(new Stock((String)stocks.get(i).get("name"), (String)stocks.get(i).get("abbv"), Double.valueOf((String)stocks.get(i).get("price"))));
         }
         return ret;
     }

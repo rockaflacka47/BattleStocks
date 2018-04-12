@@ -105,7 +105,7 @@ public class Login extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT).show();
     }
 
     public void priceChange(Intent intent){
