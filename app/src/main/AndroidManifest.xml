@@ -28,11 +28,13 @@
                 <action android:name="edu.pitt.cs1699.team9.OFF_MARKET" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="edu.pitt.cs1699.team9.CRASH" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
+        <receiver android:name="MyReceiver" >
+            <intent-filter>
+                <action android:name="edu.pitt.cs1699.team9.CRASH" >
+                </action>
+            </intent-filter>
+        </receiver>
         <activity android:name=".Trade" />
         <activity android:name=".Profile" />
         <activity android:name=".Holdings"></activity>

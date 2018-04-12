@@ -1,7 +1,8 @@
 package com.example.der62.battlestocks;
 
 import android.content.Intent;
-        import android.support.annotation.NonNull;
+import android.content.IntentFilter;
+import android.support.annotation.NonNull;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
         import android.text.TextUtils;
@@ -36,6 +37,7 @@ public class Login extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     ArrayList<HashMap> availableStocks;
+    MyReceiver receiver = new MyReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,9 @@ public class Login extends AppCompatActivity {
         mDetailTextView = findViewById(R.id.submit);
         mEmailField = findViewById(R.id.email);
         mPasswordField = findViewById(R.id.password);
+
+        registerReceiver(receiver, new IntentFilter("edu.pitt.cs1699.team9.CRASH"));
+
         database = FirebaseDatabase.getInstance();
         //connect to DB
         reference = database.getReference();
@@ -73,30 +78,34 @@ public class Login extends AppCompatActivity {
             priceChange(intent);
         }else if("edu.pitt.cs1699.team9.OFF_MARKET".equals(action)){
             offMarket(intent);
-        }else if("edu.pitt.cs1699.team9.CRASH".equals(action)){
-            shitsfucked(intent);
         }
     }
 
-    public void newStock(Intent intent){
+    public void newStock(Intent intent) {
         Bundle extras = intent.getExtras();
-        String name = extras.getString("company");
-        Double price = Double.valueOf(extras.getString("price"));
-        if(availableStocks == null){
-            Toast.makeText(this, "There was a problem adding " + name + " please try again.", Toast.LENGTH_SHORT);
-        }else{
-            Stock stock = new Stock();
-            String abbr = name;
-            if(name.length() >= 4){
-                abbr = name.substring(0, 4);
+        final String name = extras.getString("company");
+        final Double price = Double.valueOf(extras.getString("price"));
+        // Get list of stocks
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
+                Stock stock = new Stock();
+                String abbr = name;
+                if (name.length() >= 4) {
+                    abbr = name.substring(0, 4);
+                }
+                ArrayList<Stock> updatedStocks = stock.hashmapToStock(availableStocks);
+                abbr = abbr.toUpperCase();
+                updatedStocks.add(new Stock(name, abbr, price));
+                reference.child("AvailableStocks").setValue(updatedStocks);
             }
-            ArrayList<Stock> updatedStocks = stock.hashmapToStock(availableStocks);
-            abbr = abbr.toUpperCase();
-            updatedStocks.add(new Stock(name, abbr, price));
-            reference.child("AvailableStocks").setValue(updatedStocks);
-            System.out.println("NEW STOCK ADDED");
-            Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT);
-        }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT);
     }
 
     public void priceChange(Intent intent){
@@ -109,16 +118,12 @@ public class Login extends AppCompatActivity {
         //TODO: Pull correct extra names out of the bundle
     }
 
-    public void shitsfucked(Intent intent){
-        Bundle extras = intent.getExtras();
-        //TODO: Pull correct extra names out of the bundle
-    }
-
     @Override
     public void onStart(){
         super.onStart();
         FirebaseUser currUser = mAuth.getCurrentUser();
-
+        // re-register receiver because we removed it onStop()
+        registerReceiver(receiver, new IntentFilter("edu.pitt.cs1699.team9.CRASH"));
     }
 
     public void createAccount(final String email, String password){
@@ -151,13 +156,11 @@ public class Login extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(Login.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-
-
                         }
                     }
                 });
-
     }
+
     public boolean checkInput(String email, String password){
         if(password.equals("")|| email.equals("")){
             Toast.makeText(Login.this, "Please fill out all sections", Toast.LENGTH_LONG).show();
@@ -171,6 +174,7 @@ public class Login extends AppCompatActivity {
         }
         return false;
     }
+
     private void signIn(String email, String password) {
         if (!validateForm()) {
             return;
@@ -201,10 +205,12 @@ public class Login extends AppCompatActivity {
                 });
         // [END sign_in_with_email]
     }
+
     private void goHome(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
     private void signOut() {
         mAuth.signOut();
     }
@@ -229,6 +235,7 @@ public class Login extends AppCompatActivity {
 
         return valid;
     }
+
     public void onClick(View v){
         int i = v.getId();
         if (i == R.id.createAccount) {
@@ -237,5 +244,4 @@ public class Login extends AppCompatActivity {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         }
     }
-
 }
