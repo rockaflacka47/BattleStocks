@@ -5,7 +5,8 @@ import android.content.Intent;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
         import android.text.TextUtils;
-        import android.util.Patterns;
+import android.util.Log;
+import android.util.Patterns;
         import android.view.View;
         import android.widget.EditText;
         import android.widget.TextView;
@@ -83,7 +84,7 @@ public class Login extends AppCompatActivity {
         String name = extras.getString("company");
         Double price = Double.valueOf(extras.getString("price"));
         if(availableStocks == null){
-            Toast.makeText(this, "There was a problem adding " + name + " please try again.", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Error 1: There was a problem adding " + name + " please try again.", Toast.LENGTH_SHORT).show();
         }else{
             Stock stock = new Stock();
             String abbr = name;
@@ -95,13 +96,47 @@ public class Login extends AppCompatActivity {
             updatedStocks.add(new Stock(name, abbr, price));
             reference.child("AvailableStocks").setValue(updatedStocks);
             System.out.println("NEW STOCK ADDED");
-            Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void priceChange(Intent intent){
         Bundle extras = intent.getExtras();
-        //TODO: Pull correct extra names out of the bundle
+        String name = extras.getString("company");
+        Double price = 0.0;
+
+        if(extras.getString("price") != null) {
+            price = Double.valueOf(extras.getString("price"));
+        }
+        if(availableStocks == null){
+            Toast.makeText(this, "Could not find stocks for " + name, Toast.LENGTH_SHORT).show();
+        }else {
+            Stock stock = new Stock();
+            ArrayList<Stock> updatedStocks = stock.hashmapToStock(availableStocks);
+
+            boolean updatedStock = false;
+            double oldPrice = 0;
+            double newPrice = 0;
+            for (Stock stk : updatedStocks){
+                if(stk.name.equals(name)){
+                    oldPrice = stk.price;
+                    stk.price += price;
+                    newPrice = stk.price;
+                    updatedStock = true;
+                    break;
+                }
+            }
+
+            if(!updatedStock){
+                Toast.makeText(this, "Could not find stocks for " + name, Toast.LENGTH_SHORT).show();
+            }else{
+                reference.child("AvailableStocks").setValue(updatedStocks);
+                Toast.makeText(this, "Stock updated! Price of" + name + " changed from $" + oldPrice +
+                        " per share to $" + newPrice + " per share!", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
     }
 
     public void offMarket(Intent intent){
