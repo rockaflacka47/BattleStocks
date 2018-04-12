@@ -35,6 +35,10 @@ public class Stock {
     public void setPrice(double newPrice){ price = newPrice ; }
 
     public ArrayList<Stock> hashmapToStock(ArrayList<HashMap> stocks){
+        if(stocks == null){
+            stocks = new ArrayList<>();
+        }
+
         ArrayList<Stock> ret = new ArrayList<>();
         for(int i = 0; i < stocks.size(); i++){
             if(stocks.get(i).get("price").getClass() == Long.class){
