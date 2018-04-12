@@ -32,6 +32,7 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
     private DatabaseReference user;
     private ArrayList<HashMap> owned;
     private FirebaseUser currUser;
+    private double userBalance;
 
     public AvailableListAdapter(ArrayList<String> list, Context context, DatabaseReference user, ArrayList<HashMap> owned, FirebaseUser currUser) {
         this.list = list;
@@ -83,6 +84,17 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                 String text = list.get(position);
                 final String company = text.substring(0, text.indexOf(" "));
                 final Query userStocksQuery = userStocksRef.orderByChild("name").equalTo(company);
+
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        userBalance = Double.valueOf((String) dataSnapshot.child("money").getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) { }
+                });
+
                 userStocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot1) {
@@ -92,7 +104,7 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                             double tPrice = 0;
 
                             for(DataSnapshot ch : it){
-                                tPrice = new Double((long)ch.child("price").getValue());
+                                tPrice = new Double((String) ch.child("price").getValue());
                             }
 
                             final double price = tPrice;
@@ -126,6 +138,8 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                                         userStocksRef.child(ref.getKey()).child("shares").setValue(shares + 1);
 
                                         userRef.child("money").setValue(Double.valueOf(balance - price).toString());
+
+                                        ((Trade) context).updateLists();
                                     }
                                 }
 
@@ -143,7 +157,7 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                                     double tPrice = 0;
 
                                     for(DataSnapshot ch : it){
-                                        tPrice = new Double((long)ch.child("price").getValue());
+                                        tPrice = new Double((String)ch.child("price").getValue());
                                     }
 
                                     final double price = tPrice;
@@ -153,9 +167,11 @@ public class AvailableListAdapter extends BaseAdapter implements ListAdapter {
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             long count = dataSnapshot.getChildrenCount();
                                             userStocksRef.child(Long.toString(count)).child("name").setValue(company);
-                                            userStocksRef.child(Long.toString(count)).child("price").setValue(price);
+                                            userStocksRef.child(Long.toString(count)).child("price").setValue(Double.toString(price));
                                             userStocksRef.child(Long.toString(count)).child("shares").setValue(1);
-                                            //userRef.child("money").setValue(Double.valueOf(balance - price).toString());
+                                            userRef.child("money").setValue(Double.valueOf(userBalance - price).toString());
+
+                                            ((Trade) context).updateLists();
                                         }
 
                                         @Override

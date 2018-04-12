@@ -41,7 +41,11 @@ public class Trade extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
 
-        listener = reference.addValueEventListener(new ValueEventListener() {
+        updateLists();
+    }
+
+    public void updateLists() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
@@ -49,18 +53,11 @@ public class Trade extends AppCompatActivity {
                 if(ownedStocks == null){
                     ownedStocks = new ArrayList<>();
                 }
-                if(availableStocks == null){
+                if(availableStocks == null) {
                     availableStocks = new ArrayList<>();
                 }
-                /*if(ownedStocks == null){
-                    ownedStocks = new ArrayList<>();
-                    ownedStocks.add(new OwnedStock("Apple", "APPL", 512, 2));
-                    ownedStocks.add(new OwnedStock("Amazon", "AMZN", 800, 1));
-                    ownedStocks.add(new OwnedStock("Microsoft", "MSFT", 400, 3));
-                    ownedStocks.add(new OwnedStock("Google", "GOOGL", 1012, 4));
-                }*/
 
-                    reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
+                reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
                 ArrayList<String> forList = new ArrayList<>();
                 if(availableStocks != null) {
                     for (int i = 0; i < availableStocks.size(); i++) {
@@ -68,17 +65,17 @@ public class Trade extends AppCompatActivity {
                         forList.add(availableStocks.get(i).get("name") + " : $" + availableStocks.get(i).get("price"));
                     }
                 }
-                    list = findViewById(R.id.availableStocksList);
-                    arrayAdapter = new AvailableListAdapter(forList, Trade.this, reference, ownedStocks, currUser);
-                    list.setAdapter(arrayAdapter);
-                    ArrayList<String> currOwnedList = new ArrayList<>();
+                list = findViewById(R.id.availableStocksList);
+                arrayAdapter = new AvailableListAdapter(forList, Trade.this, reference, ownedStocks, currUser);
+                list.setAdapter(arrayAdapter);
+                ArrayList<String> currOwnedList = new ArrayList<>();
                 if(ownedStocks != null) {
                     for (int i = 0; i < ownedStocks.size(); i++) {
                         currOwnedList.add(ownedStocks.get(i).get("name") + " : " + ownedStocks.get(i).get("shares") + " shares owned");
                     }
                 }
                 currAdapter = new HoldingsListAdapter(currOwnedList, Trade.this);
-                list2 = (ListView) findViewById(R.id.currentHoldingsList);
+                list2 = findViewById(R.id.currentHoldingsList);
                 list2.setAdapter(currAdapter);
 
             }
@@ -88,12 +85,5 @@ public class Trade extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        reference.removeEventListener(listener);
     }
 }

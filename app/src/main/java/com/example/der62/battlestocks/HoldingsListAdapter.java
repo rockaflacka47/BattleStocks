@@ -79,20 +79,27 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                 stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot1) {
-                        long shares = (long) dataSnapshot1.child("shares").getValue();
+                        long shares = (long) dataSnapshot1.getChildren().iterator().next().child("shares").getValue();
                         if (shares > 0) {
-                            userStocksRef.child(dataSnapshot1.getKey()).child("shares").setValue(shares - 1);
-                            final double price = Double.valueOf((String) dataSnapshot1.child("price").getValue());
-                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot2) {
-                                    double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
-                                    userRef.child("money").setValue(Double.valueOf(balance + price).toString());
-                                }
+                            if (shares == 1) {
+                                userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).removeValue();
+                                ((Trade) context).updateLists();
+                            } else {
+                                userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).child("shares").setValue(shares - 1);
+                                final double price = Double.valueOf((String) dataSnapshot1.getChildren().iterator().next().child("price").getValue());
+                                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot2) {
+                                        double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
+                                        userRef.child("money").setValue(Double.valueOf(balance + price).toString());
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {}
-                            });
+                                        ((Trade) context).updateLists();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {}
+                                });
+                            }
                         } else {
                             Toast.makeText(context, "You cannot have negative shares", Toast.LENGTH_SHORT);
                         }
@@ -114,15 +121,15 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                 stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot1) {
-                        final double price = Double.valueOf((String) dataSnapshot1.child("price").getValue());
+                        final double price = Double.valueOf((String) dataSnapshot1.getChildren().iterator().next().child("price").getValue());
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot2) {
-                                double balance = Double.valueOf((String) dataSnapshot2.child("balance").getValue());
+                                double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
                                 if (price > balance) {
                                     Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
                                 } else {
-                                    long shares = (long) dataSnapshot1.child("shares").getValue();
+                                    long shares = (long) dataSnapshot1.getChildren().iterator().next().child("shares").getValue();
 
                                     Iterable<DataSnapshot> it = dataSnapshot1.getChildren();
                                     DataSnapshot ref = null;
@@ -135,6 +142,8 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
 
 
                                     userRef.child("money").setValue(Double.valueOf(balance - price).toString());
+
+                                    ((Trade) context).updateLists();
                                 }
                             }
 
@@ -147,6 +156,8 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                     public void onCancelled(DatabaseError databaseError) {}
                 });
                 notifyDataSetChanged();
+
+
             }
         });
 
