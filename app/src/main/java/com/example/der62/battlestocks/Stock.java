@@ -3,9 +3,6 @@ package com.example.der62.battlestocks;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by DER62 on 3/31/2018.
- */
 //represents a single stock
 public class Stock {
     protected String name;
@@ -32,19 +29,22 @@ public class Stock {
     public double getPrice(){
         return price;
     }
-    public void setPrice(double newPrice){ price = newPrice ; }
+    public void setPrice(double newPrice){
+        price = newPrice;
+    }
 
-    public ArrayList<Stock> hashmapToStock(ArrayList<HashMap> stocks){
-        if(stocks == null){
-            stocks = new ArrayList<>();
+    //Takes an ArrayList of HashMap and parses it into an ArrayList of Stock
+    public ArrayList<Stock> hashMapToStock(ArrayList<HashMap> stocksList){
+        if(stocksList == null){
+            stocksList = new ArrayList<>();
         }
 
         ArrayList<Stock> ret = new ArrayList<>();
-        for(int i = 0; i < stocks.size(); i++){
-            if(stocks.get(i).get("price").getClass() == Long.class){
-                stocks.get(i).put("price", new Double((Long)stocks.get(i).get("price")));
+        for(int i = 0; i < stocksList.size(); i++){
+            if(stocksList.get(i).get("price").getClass() == Long.class){
+                stocksList.get(i).put("price", new Double((Long)stocksList.get(i).get("price")));
             }
-            ret.add(new Stock((String)stocks.get(i).get("name"), (String)stocks.get(i).get("abbv"), Double.valueOf((String)stocks.get(i).get("price"))));
+            ret.add(new Stock((String)stocksList.get(i).get("name"), (String)stocksList.get(i).get("abbv"), (double)stocksList.get(i).get("price")));
         }
         return ret;
     }

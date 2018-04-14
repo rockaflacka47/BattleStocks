@@ -24,33 +24,37 @@ public class Profile extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
     FirebaseUser currUser;
-    ArrayList<HashMap> ownedStocks;
+
+    ArrayList<HashMap> ownedStocksHash;
     ArrayList<OwnedStock> ownedStocksObj;
-    double balance = 0;
-    double netWorth = 0;
+
+    double balance = 0.0;
+    double netWorth = 0.0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         mAuth = FirebaseAuth.getInstance();
         currUser = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
 
         //When the firebase changes update our data and then our gui
+
         reference.addValueEventListener(new ValueEventListener() {
-            @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                balance = new Double((long)dataSnapshot.child("Users").child(currUser.getUid()).child("money").getValue());
-                ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
+
+                balance = dataSnapshot.child("Users").child(currUser.getUid()).child("money").getValue(Double.class);
+                ownedStocksHash = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
                 ownedStocksObj = new ArrayList<>();
                 netWorth = 0;
 
-                if(ownedStocks != null) {
-                    for (HashMap h : ownedStocks) {
-                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), (double) h.get("price"), (int) h.get("shares"));
+                if(ownedStocksHash != null) {
+                    for (HashMap h : ownedStocksHash) {
+                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), Double.parseDouble("" + h.get("price")), Integer.parseInt("" + h.get("shares")));
                         ownedStocksObj.add(os);
                     }
 

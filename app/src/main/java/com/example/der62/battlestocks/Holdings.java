@@ -53,7 +53,8 @@ public class Holdings extends AppCompatActivity {
 
                 if(ownedStocks != null) {
                     for (HashMap h : ownedStocks) {
-                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), new Double((String) h.get("price")), (int) h.get("shares"));
+                        Log.d("WOOOA", h.toString());
+                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("name"), Double.parseDouble("" + h.get("price")), Integer.parseInt("" + h.get("shares")));
                         ownedStocksObj.add(os);
                     }
 
@@ -65,12 +66,10 @@ public class Holdings extends AppCompatActivity {
                         holdingsListString.add(os.getAbbv() + " : " + os.getShares() + " shares - $" + df.format(os.getShares() * os.getPrice()));
                         arrayAdapter.notifyDataSetChanged();
                     }
-                    Log.d("SSSSSSS", "!??????????????????????????????");
 
                 }else{
                     holdingsListString.add("You currently have no holdings!");
                     arrayAdapter.notifyDataSetChanged();
-                    Log.d("SSSSSSS", "!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
 

@@ -41,7 +41,7 @@ public class MyReceiver extends BroadcastReceiver {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
                 Stock s = new Stock();
-                ArrayList<Stock> stocks = s.hashmapToStock(availableStocks);
+                ArrayList<Stock> stocks = s.hashMapToStock(availableStocks);
                 for(Stock stock: stocks){
                     Double price = stock.getPrice();
                     stock.setPrice(price * (1-(pct/100)));

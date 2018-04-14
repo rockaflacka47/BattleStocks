@@ -86,12 +86,12 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                                 ((Trade) context).updateLists();
                             } else {
                                 userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).child("shares").setValue(shares - 1);
-                                final double price = Double.valueOf((String) dataSnapshot1.getChildren().iterator().next().child("price").getValue());
+                                final double price = dataSnapshot1.getChildren().iterator().next().child("price").getValue(Double.class);
                                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot2) {
-                                        double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
-                                        userRef.child("money").setValue(Double.valueOf(balance + price).toString());
+                                        double balance = dataSnapshot2.child("money").getValue(Double.class);
+                                        userRef.child("money").setValue(balance + price);
 
                                         ((Trade) context).updateLists();
                                     }
@@ -121,15 +121,15 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                 stocksQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot1) {
-                        final double price = Double.valueOf((String) dataSnapshot1.getChildren().iterator().next().child("price").getValue());
+                        final double price = dataSnapshot1.getChildren().iterator().next().child("price").getValue(Double.class);
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot2) {
-                                double balance = Double.valueOf((String) dataSnapshot2.child("money").getValue());
+                                double balance = dataSnapshot2.child("money").getValue(Double.class);
                                 if (price > balance) {
                                     Toast.makeText(context, "You do not have enough money", Toast.LENGTH_SHORT);
                                 } else {
-                                    long shares = (long) dataSnapshot1.getChildren().iterator().next().child("shares").getValue();
+                                    long shares = dataSnapshot1.getChildren().iterator().next().child("shares").getValue(Long.class);
 
                                     Iterable<DataSnapshot> it = dataSnapshot1.getChildren();
                                     DataSnapshot ref = null;
@@ -141,7 +141,7 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                                     userStocksRef.child(ref.getKey()).child("shares").setValue(shares + 1);
 
 
-                                    userRef.child("money").setValue(Double.valueOf(balance - price).toString());
+                                    userRef.child("money").setValue(balance - price);
 
                                     ((Trade) context).updateLists();
                                 }

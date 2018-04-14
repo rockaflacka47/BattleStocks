@@ -86,17 +86,20 @@ public class Login extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         final String name = extras.getString("company");
         final Double price = Double.valueOf(extras.getString("price"));
+
         // Get list of stocks
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
                 Stock stock = new Stock();
                 String abbr = name;
+                availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
+
                 if (name.length() >= 4) {
                     abbr = name.substring(0, 4);
                 }
-                ArrayList<Stock> updatedStocks = stock.hashmapToStock(availableStocks);
+
+                ArrayList<Stock> updatedStocks = stock.hashMapToStock(availableStocks);
                 abbr = abbr.toUpperCase();
                 updatedStocks.add(new Stock(name, abbr, price));
                 reference.child("AvailableStocks").setValue(updatedStocks);
@@ -104,48 +107,69 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                //do nothing
             }
         });
         Toast.makeText(this, "New stock added! " + name + " was added at $" + price + " per share.", Toast.LENGTH_SHORT).show();
     }
 
-    public void priceChange(Intent intent){
+    public void priceChange(Intent intent) {
         Bundle extras = intent.getExtras();
-        String name = extras.getString("company");
-        Double price = 0.0;
+        final String name = extras.getString("company");
+        double price = 0.0;
 
-        if(extras.getString("price") != null) {
-            price = Double.valueOf(extras.getString("price"));
+        if (extras.getString("price") != null) {
+            try {
+                price = Double.valueOf(extras.getString("price"));
+            } catch (Exception e1) {
+                Toast.makeText(Login.this, "Failed to get amount of price change!", Toast.LENGTH_LONG).show();
+            }
         }
-        if(availableStocks == null){
-            Toast.makeText(this, "Could not find stocks for " + name, Toast.LENGTH_SHORT).show();
-        }else {
-            Stock stock = new Stock();
-            ArrayList<Stock> updatedStocks = stock.hashmapToStock(availableStocks);
 
-            boolean updatedStock = false;
-            double oldPrice = 0;
-            double newPrice = 0;
-            for (Stock stk : updatedStocks){
-                if(stk.name.equals(name)){
-                    oldPrice = stk.price;
-                    stk.price += price;
-                    newPrice = stk.price;
-                    updatedStock = true;
-                    break;
+        final double finPrice = price;
+
+        // Get list of stocks
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Stock stock = new Stock();
+                String abbr = name;
+                availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
+
+                if (availableStocks == null) {
+                    Toast.makeText(Login.this, "Could not find stocks for " + name + ".The list of available stocks is empty!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Stock stock1 = new Stock();
+                    ArrayList<Stock> updatedStocks = stock1.hashMapToStock(availableStocks);
+
+                    boolean updatedStock = false;
+                    double oldPrice = 0;
+                    double newPrice = 0;
+                    for (Stock stk : updatedStocks) {
+                        if (stk.name.equals(name)) {
+                            oldPrice = stk.price;
+                            stk.price += finPrice;
+                            newPrice = stk.price;
+                            updatedStock = true;
+                            break;
+                        }
+                    }
+
+                    if (!updatedStock) {
+                        Toast.makeText(Login.this, "Could not find stocks for " + name, Toast.LENGTH_SHORT).show();
+                    } else {
+                        reference.child("AvailableStocks").setValue(updatedStocks);
+                        Toast.makeText(Login.this, "Stock updated! Price of " + name + " changed from $" + oldPrice +
+                                " per share to $" + newPrice + " per share!", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
             }
 
-            if(!updatedStock){
-                Toast.makeText(this, "Could not find stocks for " + name, Toast.LENGTH_SHORT).show();
-            }else{
-                reference.child("AvailableStocks").setValue(updatedStocks);
-                Toast.makeText(this, "Stock updated! Price of" + name + " changed from $" + oldPrice +
-                        " per share to $" + newPrice + " per share!", Toast.LENGTH_SHORT).show();
+            public void onCancelled(DatabaseError databaseError) {
+                //do nothing
             }
-
-
-        }
+        });
     }
 
     public void offMarket(Intent intent){
