@@ -47,6 +47,12 @@ public class OwnedStock extends Stock{
                 ArrayList<HashMap> availableStocks = (ArrayList<HashMap>) dataSnapshot.child("AvailableStocks").getValue();
                 ArrayList<HashMap> ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
 
+                if(availableStocks == null)
+                    availableStocks = new ArrayList<>();
+
+                if(ownedStocks == null)
+                    ownedStocks = new ArrayList<>();
+
                 for(int i = 0; i < ownedStocks.size(); i++){
                     String currName = (String)ownedStocks.get(i).get("name");
 

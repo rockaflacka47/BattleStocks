@@ -1,6 +1,8 @@
 package com.example.der62.battlestocks;
 
 import android.content.Context;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
 
@@ -82,7 +85,10 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
                         long shares = (long) dataSnapshot1.getChildren().iterator().next().child("shares").getValue();
                         if (shares > 0) {
                             if (shares == 1) {
-                                userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).removeValue();
+
+                                String nameOfStockToRemove = (String) dataSnapshot1.getChildren().iterator().next().child("name").getValue();
+                                removeStockFromOwned(nameOfStockToRemove, userStocksRef);
+                                ((Trade) context).updateLists();
                                 ((Trade) context).updateLists();
                             } else {
                                 userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).child("shares").setValue(shares - 1);
@@ -162,5 +168,37 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
         });
 
         return view;
+    }
+
+    public void removeStockFromOwned(final String stockName, final DatabaseReference userStocksRef){
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser currUser = mAuth.getCurrentUser();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference reference = database.getReference();
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener(){
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<HashMap> ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
+
+                if (ownedStocks == null)
+                    ownedStocks = new ArrayList<>();
+
+                for(int i = 0; i < ownedStocks.size(); i++){
+                    String currName = (String)ownedStocks.get(i).get("name");
+                    if(currName.equals(stockName)){
+                        ownedStocks.remove(i);
+                    }
+                }
+                Log.d("STOCKS", ownedStocks.toString());
+
+                reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

@@ -84,7 +84,7 @@ public class Login extends AppCompatActivity {
 
     public void newStock(Intent intent) {
         Bundle extras = intent.getExtras();
-        final String name = extras.getString("company");
+        final String name = extras.getString("company").replaceAll(" ", "-");
         final Double price = Double.valueOf(extras.getString("price"));
 
         // Get list of stocks

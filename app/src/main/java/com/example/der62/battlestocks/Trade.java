@@ -44,7 +44,7 @@ public class Trade extends AppCompatActivity {
     }
 
     public void updateLists() {
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ownedStocks = (ArrayList<HashMap>) dataSnapshot.child("Users").child(currUser.getUid()).child("Stocks").getValue();
@@ -58,7 +58,6 @@ public class Trade extends AppCompatActivity {
                     availableStocks = new ArrayList<>();
                 }
 
-                reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);
 
                 ArrayList<String> forList = new ArrayList<>();
                 if(availableStocks != null) {
