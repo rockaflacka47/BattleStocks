@@ -56,7 +56,8 @@ public class Profile extends AppCompatActivity {
 
                 if(ownedStocksHash != null) {
                     for (HashMap h : ownedStocksHash) {
-                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), Double.parseDouble("" + h.get("price")), Integer.parseInt("" + h.get("shares")));
+                        OwnedStock os = new OwnedStock((String) h.get("name"), (String) h.get("abbv"), Double.parseDouble(("" + h.get("price"))== null || ("" + h.get("price")).equals("")?"1":""+h.get("price")), Integer.parseInt((("" + h.get("shares"))==null || ("" + h.get("shares")).equals("")?"1":""+h.get("shares"))));
+
                         ownedStocksObj.add(os);
                     }
 

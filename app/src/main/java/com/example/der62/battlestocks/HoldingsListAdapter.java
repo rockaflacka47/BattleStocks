@@ -88,8 +88,21 @@ public class HoldingsListAdapter extends BaseAdapter implements ListAdapter {
 
                                 String nameOfStockToRemove = (String) dataSnapshot1.getChildren().iterator().next().child("name").getValue();
                                 removeStockFromOwned(nameOfStockToRemove, userStocksRef);
-                                ((Trade) context).updateLists();
-                                ((Trade) context).updateLists();
+
+                                userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).child("shares").setValue(shares - 1);
+                                final double price = dataSnapshot1.getChildren().iterator().next().child("price").getValue(Double.class);
+                                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot2) {
+                                        double balance = dataSnapshot2.child("money").getValue(Double.class);
+                                        userRef.child("money").setValue(balance + price);
+
+                                        ((Trade) context).updateLists();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {}
+                                });
                             } else {
                                 userStocksRef.child(dataSnapshot1.getChildren().iterator().next().getKey()).child("shares").setValue(shares - 1);
                                 final double price = dataSnapshot1.getChildren().iterator().next().child("price").getValue(Double.class);
