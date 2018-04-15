@@ -5,4 +5,6 @@
     <string name="buy">Buy</string>
     <string name="current_holdings">Current Holdings</string>
     <string name="available_stocks">Available Stocks</string>
+
+    <string name="send_screenshot">Send Screenshot</string>
 </resources>
