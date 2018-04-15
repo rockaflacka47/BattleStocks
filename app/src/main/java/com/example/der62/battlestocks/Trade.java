@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -60,9 +61,10 @@ public class Trade extends AppCompatActivity {
 
 
                 ArrayList<String> forList = new ArrayList<>();
+                DecimalFormat format = new DecimalFormat("#.00");
                 if(availableStocks != null) {
                     for (int i = 0; i < availableStocks.size(); i++) {
-                        forList.add(availableStocks.get(i).get("name") + " : $" + availableStocks.get(i).get("price"));
+                        forList.add(availableStocks.get(i).get("name") + " : $" + format.format(availableStocks.get(i).get("price")));
                     }
                 }
 
