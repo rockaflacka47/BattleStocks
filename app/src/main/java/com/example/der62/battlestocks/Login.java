@@ -86,6 +86,10 @@ public class Login extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         final String name = extras.getString("company").replaceAll(" ", "-");
         final Double price = Double.valueOf(extras.getString("price"));
+        if(price <= 0){
+            Toast.makeText(this, "New stock, " + name + ", was not added due to an invalid price.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Get list of stocks
         reference.addListenerForSingleValueEvent(new ValueEventListener() {

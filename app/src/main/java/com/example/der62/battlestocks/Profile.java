@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -93,5 +94,8 @@ public class Profile extends AppCompatActivity {
 
         netWorthTV.setText("Net Worth: $" + df.format(netWorth + balance ));
         balanceTV.setText("Balance: $" + df.format(balance));
+        if(balance <=  10){
+            Toast.makeText(this, "Warning, your balance is low.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
