@@ -34,6 +34,7 @@ public class Trade extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trade);
 
+        OwnedStock.syncPriceWithDB();
         mAuth = FirebaseAuth.getInstance();
         currUser = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();

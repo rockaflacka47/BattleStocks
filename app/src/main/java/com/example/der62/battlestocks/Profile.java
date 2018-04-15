@@ -37,6 +37,8 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+
+        OwnedStock.syncPriceWithDB();
         mAuth = FirebaseAuth.getInstance();
         currUser = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();

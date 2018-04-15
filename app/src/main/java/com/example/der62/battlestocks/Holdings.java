@@ -32,6 +32,8 @@ public class Holdings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_holdings);
+
+        OwnedStock.syncPriceWithDB();
         mAuth = FirebaseAuth.getInstance();
         currUser = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
