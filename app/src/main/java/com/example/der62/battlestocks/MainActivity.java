@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,4 +34,22 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
+
+
+    public void lookUp(View view){
+        Intent intent = new Intent("com.group10.photoeditor");
+        intent.setPackage("com.group10.photoeditor");
+        intent.putExtra("Activity", "LookupActivity");
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        sendBroadcast(intent);
+    }
+
+    public void rename(View view){
+        Intent intent = new Intent("com.group10.photoeditor");
+        intent.setPackage("com.group10.photoeditor");
+        intent.putExtra("Activity", "RenameActivity");
+        intent.putExtra("Filename", "banana");
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        sendBroadcast(intent);
+    }
 }

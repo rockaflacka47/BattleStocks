@@ -24,7 +24,7 @@
         android:text="Trade"
         android:layout_alignLeft="@id/profile"
         android:layout_alignRight="@id/profile"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="8dp"
         android:onClick="goTrade"/>
     <Button
         android:id="@+id/profile"
@@ -33,7 +33,7 @@
         android:layout_below="@id/trade"
         android:layout_centerHorizontal="true"
         android:text="Profile"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="8dp"
         android:paddingRight="25dp"
         android:paddingLeft="25dp"
         android:onClick="goProfile"/>
@@ -45,9 +45,33 @@
         android:layout_below="@id/profile"
         android:layout_centerHorizontal="true"
         android:text="Send Photo"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="8dp"
         android:paddingRight="25dp"
         android:paddingLeft="25dp"
         android:onClick="goPhoto"/>
+
+    <Button
+        android:id="@+id/lookup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sendphoto"
+        android:layout_centerHorizontal="true"
+        android:text="Lookup"
+        android:layout_marginTop="8dp"
+        android:paddingRight="25dp"
+        android:paddingLeft="25dp"
+        android:onClick="lookUp"/>
+
+    <Button
+        android:id="@+id/rename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lookup"
+        android:layout_centerHorizontal="true"
+        android:text="Rename"
+        android:layout_marginTop="8dp"
+        android:paddingRight="25dp"
+        android:paddingLeft="25dp"
+        android:onClick="rename"/>
 
 </RelativeLayout>
