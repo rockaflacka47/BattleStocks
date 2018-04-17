@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent("com.group10.photoeditor");
         intent.setPackage("com.group10.photoeditor");
         intent.putExtra("Activity", "RenameActivity");
-        intent.putExtra("Filename", "banana");
+        intent.putExtra("Filename", "image");
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         sendBroadcast(intent);
     }
