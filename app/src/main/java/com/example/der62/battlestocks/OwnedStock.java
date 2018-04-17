@@ -56,13 +56,18 @@ public class OwnedStock extends Stock{
                 for(int i = 0; i < ownedStocks.size(); i++){
                     String currName = (String)ownedStocks.get(i).get("name");
 
+                    boolean found = false;
                     for(int j = 0; j < availableStocks.size(); j++){
                         String currAvailableName = (String)availableStocks.get(j).get("name");
                         if(currName.equals(currAvailableName)){
                             ownedStocks.get(i).remove("price");
                             ownedStocks.get(i).put("price", Double.valueOf("" + availableStocks.get(j).get("price")));
+                            found = true;
                             break;
                         }
+                    }
+                    if(!found){
+                        ownedStocks.remove(i--);
                     }
                 }
                 reference.child("Users").child(currUser.getUid()).child("Stocks").setValue(ownedStocks);

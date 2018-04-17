@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <service
             android:name=".UpdatePrices"
-            android:exported="false"/>
+            android:exported="false" />
+
         <activity android:name=".MainActivity" />
         <activity android:name=".Login">
             <intent-filter>
@@ -21,26 +22,34 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="edu.pitt.cs1699.team9.NEW_STOCK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="edu.pitt.cs1699.team9.PRICE_CHANGE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="edu.pitt.cs1699.team9.OFF_MARKET" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name="MyReceiver" >
+
+        <receiver android:name=".MyReceiver">
             <intent-filter>
-                <action android:name="edu.pitt.cs1699.team9.CRASH" >
-                </action>
+                <action android:name="edu.pitt.cs1699.team9.CRASH"></action>
             </intent-filter>
         </receiver>
+
         <activity android:name=".Trade" />
         <activity android:name=".Profile" />
-        <activity android:name=".Holdings"></activity>
+        <activity android:name=".Holdings" />
+
+        <service
+            android:name=".OffMarketService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="edu.pitt.cs1699.team9.OFF_MARKET"></action>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -13,10 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-/**
- * Created by DER62 on 4/14/2018.
- */
-
 public class UpdatePrices extends IntentService {
     ArrayList<HashMap> availableStocks = null;
     DatabaseReference reference;
